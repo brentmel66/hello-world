@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "reviewed_on": "2026-09-28",
+  "services": [
+    {
+      "id": "deepgram-prerecorded",
+      "name": "Deepgram pre-recorded speech-to-text",
+      "provider": "Deepgram",
+      "capabilities": ["audio.transcribe.prerecorded", "speech.to_text"],
+      "description": "Transcribes pre-recorded audio through a REST API.",
+      "docs_url": "https://developers.deepgram.com/reference/speech-to-text/listen-pre-recorded",
+      "auth": "Provider API key required",
+      "pricing_status": "unknown",
+      "price_usd_per_job": null,
+      "invocation": "Consult provider documentation and bring your own account and credentials.",
+      "verified_on": "2026-09-28"
+    },
+    {
+      "id": "assemblyai-prerecorded",
+      "name": "AssemblyAI pre-recorded speech-to-text",
+      "provider": "AssemblyAI",
+      "capabilities": ["audio.transcribe.prerecorded", "speech.to_text"],
+      "description": "Transcribes pre-recorded audio with a provider API.",
+      "docs_url": "https://www.assemblyai.com/docs/pre-recorded-audio",
+      "auth": "Provider API key required",
+      "pricing_status": "unknown",
+      "price_usd_per_job": null,
+      "invocation": "Consult provider documentation and bring your own account and credentials.",
+      "verified_on": "2026-09-28"
+    },
+    {
+      "id": "deepgram-streaming",
+      "name": "Deepgram streaming speech-to-text",
+      "provider": "Deepgram",
+      "capabilities": ["audio.transcribe.streaming", "speech.to_text"],
+      "description": "Transcribes live audio through a WebSocket API.",
+      "docs_url": "https://developers.deepgram.com/reference/speech-to-text/listen-streaming",
+      "auth": "Provider API key required",
+      "pricing_status": "unknown",
+      "price_usd_per_job": null,
+      "invocation": "Consult provider documentation and bring your own account and credentials.",
+      "verified_on": "2026-09-28"
+    }
+  ]
+}
