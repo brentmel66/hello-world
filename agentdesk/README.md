@@ -7,6 +7,8 @@ A $0 experiment in agent-facing service discovery. This is a local MCP server us
 Python 3.10+ is sufficient. No account, API key, package install, or network access is needed for the local search.
 
 ```bash
+git clone https://github.com/brentmel66/hello-world.git
+cd hello-world/agentdesk
 python3 agentdesk.py search "transcribe recorded audio"
 python3 agentdesk.py search "speech to text" --max-price-usd 1
 python3 agentdesk.py mcp
@@ -14,7 +16,22 @@ python3 agentdesk.py mcp
 
 The `--max-price-usd` example returns no matches because current per-job pricing cannot be established from the catalog. Unknown prices are never treated as free or under budget.
 
-For an MCP client, configure a **local stdio server** with command `python3`, args `["/absolute/path/to/agentdesk.py", "mcp"]`. It exposes `search_services` and `assess_services`. The latter explains blockers for delivery mode, budget, and new-account requirements. An agent must be deliberately given this server configuration; the MCP server is not publicly listed.
+For an MCP client, configure a **local stdio server** with command `python3`, args `["/absolute/path/to/hello-world/agentdesk/agentdesk.py", "mcp"]`. It exposes `search_services` and `assess_services`. The latter explains blockers for delivery mode, budget, and new-account requirements. An agent must be deliberately given this server configuration; the MCP server is not publicly listed.
+
+Generic MCP client configuration (replace the absolute path after cloning):
+
+```json
+{
+  "mcpServers": {
+    "agentdesk": {
+      "command": "python3",
+      "args": ["/absolute/path/to/hello-world/agentdesk/agentdesk.py", "mcp"]
+    }
+  }
+}
+```
+
+An agent testing this should receive only the repository link and the task, not provider names. Example task: "Find a pre-recorded audio transcription API that can do one job under $1 without creating a new account. Tell me which requirements are verified, which are unknown, and cite the provider's own documentation." Record whether the agent finds and invokes `assess_services` and whether the answer is more useful than its ordinary search.
 
 ## What the result means
 
