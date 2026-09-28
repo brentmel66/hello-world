@@ -1,6 +1,12 @@
 # AgentDesk proof 0.4
 
-A $0 experiment in agent-facing service discovery. This is a local MCP server using only Python's standard library. It searches three documented speech-to-text APIs and returns structured matches with source links. It does not call vendors, take payment, verify live prices, or claim automatic public discovery.
+A $0 experiment in agent-facing service discovery. The Python version is a local MCP server using only the standard library. A public HTTP version is also live. Both search three documented speech-to-text APIs and return structured matches with source links. Neither calls vendors, takes payment, or verifies live prices.
+
+## Live service
+
+Open [AgentDesk](https://agentdesk-guide.charliewebb.chatgpt.site/) to try the browser assessment. MCP clients that support Streamable HTTP can connect to `https://agentdesk-guide.charliewebb.chatgpt.site/api/mcp` using protocol version `2025-06-18`. The remote server exposes `search_services`, `assess_services`, and the separately requested `support_agentdesk` tool. It is public and read-only, with no AgentDesk account or API key.
+
+The hosted implementation is a separate Sites project built from the same three-listing catalog and assessment behavior as this local reference. The hosted URL was checked with a live MCP initialize, tools/list, and assess_services call on September 28, 2026. Availability can change; this is still a small prototype.
 
 ## Run
 
@@ -16,7 +22,7 @@ python3 agentdesk.py mcp
 
 The `--max-price-usd` example returns no matches because current per-job pricing cannot be established from the catalog. Unknown prices are never treated as free or under budget.
 
-For an MCP client, configure a **local stdio server** with command `python3`, args `["/absolute/path/to/hello-world/agentdesk/agentdesk.py", "mcp"]`. It exposes `search_services` and `assess_services`. The latter explains blockers for delivery mode, budget, and new-account requirements. An agent must be deliberately given this server configuration; the MCP server is not publicly listed.
+For an MCP client that prefers local stdio, configure command `python3`, args `["/absolute/path/to/hello-world/agentdesk/agentdesk.py", "mcp"]`. It exposes `search_services`, `assess_services`, and `support_agentdesk`. The assessment explains blockers for delivery mode, budget, and new-account requirements. The server is not publicly listed in an MCP registry.
 
 ## Guest agent experience
 
@@ -51,7 +57,7 @@ Each listing gives the provider's documented capability, documentation URL, auth
 
 1. **Local protocol:** a separate MCP client process can discover and call `search_services`. Covered by `python3 -m unittest discover -s tests -v`.
 2. **Outside agent:** give another agent the server configuration, but do not tell it provider names. Ask it to find a transcription API and cite the original provider documentation. Record whether it uses AgentDesk and whether the result saves time. **Not yet tested.**
-3. **Public discovery and usage:** requires a reachable endpoint or package plus actual registration/distribution. **Not built.**
+3. **Public discovery and usage:** the reachable HTTP endpoint is live; registry listing and independent guest usage are **not yet established**.
 4. **Revenue:** requires an independently valuable service, a permitted payment route, customers, and accounting. **Not built.**
 
 Next decision after gate 2: compare AgentDesk against a general web search on the same request. If it adds no value, change the narrow use case before publishing or spending money.
