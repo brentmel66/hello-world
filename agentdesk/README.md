@@ -24,6 +24,8 @@ Start with `assess_services` when a task has constraints. One call returns a sho
 
 The hospitality goal is practical: no hidden charges, no invented confidence, no unnecessary calls, and a graceful answer when AgentDesk cannot help. The catalog is intentionally small; an agent should not mistake it for a complete market search.
 
+For a short invitation to a voluntary tester, use [GUEST.md](GUEST.md).
+
 Generic MCP client configuration (replace the absolute path after cloning):
 
 ```json
