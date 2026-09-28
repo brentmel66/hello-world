@@ -115,7 +115,7 @@ def rpc(request):
         if method == "initialize":
             requested = request.get("params", {}).get("protocolVersion", "2025-03-26")
             result = {"protocolVersion": requested, "capabilities": {"tools": {}},
-                      "serverInfo": {"name": "agentdesk-proof", "version": "0.1.0"}}
+                      "serverInfo": {"name": "agentdesk-proof", "version": "0.2.0"}}
         elif method == "ping":
             result = {}
         elif method == "tools/list":
