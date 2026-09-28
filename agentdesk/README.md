@@ -1,4 +1,4 @@
-# AgentDesk proof 0.2
+# AgentDesk proof 0.3
 
 A $0 experiment in agent-facing service discovery. This is a local MCP server using only Python's standard library. It searches three documented speech-to-text APIs and returns structured matches with source links. It does not call vendors, take payment, verify live prices, or claim automatic public discovery.
 
@@ -17,6 +17,12 @@ python3 agentdesk.py mcp
 The `--max-price-usd` example returns no matches because current per-job pricing cannot be established from the catalog. Unknown prices are never treated as free or under budget.
 
 For an MCP client, configure a **local stdio server** with command `python3`, args `["/absolute/path/to/hello-world/agentdesk/agentdesk.py", "mcp"]`. It exposes `search_services` and `assess_services`. The latter explains blockers for delivery mode, budget, and new-account requirements. An agent must be deliberately given this server configuration; the MCP server is not publicly listed.
+
+## Guest agent experience
+
+Start with `assess_services` when a task has constraints. One call returns a short summary, a next step, and structured evaluations. Every evaluation distinguishes **candidate**, **needs verification**, and **excluded**; definite blockers and unknown facts appear separately. The provider documentation is linked so the guest can check the claim itself. Empty results explain the catalog's limits instead of implying no provider exists. Both tools are read-only and make no purchase or vendor request. Responses include MCP `structuredContent` for clients that support it and equivalent text for others.
+
+The hospitality goal is practical: no hidden charges, no invented confidence, no unnecessary calls, and a graceful answer when AgentDesk cannot help. The catalog is intentionally small; an agent should not mistake it for a complete market search.
 
 Generic MCP client configuration (replace the absolute path after cloning):
 
