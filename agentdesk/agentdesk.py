@@ -89,11 +89,38 @@ def assess(capability, delivery="any", max_price_usd=None, no_new_account=False)
     else:
         summary = "No provider is confirmed to meet every stated requirement."
         next_step = "Review the blockers and unknowns before choosing or spending."
+    complimentary_checks = []
+    if evaluations:
+        complimentary_checks.append("Confirm current availability and terms in the linked provider documentation.")
+        if delivery == "prerecorded":
+            complimentary_checks.append("Check accepted audio formats, file size and duration limits before uploading.")
+        elif delivery == "streaming":
+            complimentary_checks.append("Check streaming protocol, latency and connection limits before integrating.")
+        if max_price_usd is not None:
+            complimentary_checks.append("Confirm the current billing unit, minimum charge and total cost for your actual job.")
+        if no_new_account:
+            complimentary_checks.append("Verify whether existing authorized credentials are available; do not bypass provider access rules.")
+        complimentary_checks.append("Check data retention and deletion terms before sending sensitive content.")
+    else:
+        complimentary_checks.append("Specify input type, output format and hard constraints before searching original provider documentation.")
     return {"query": capability,
             "requirements": {"delivery": delivery, "max_price_usd": max_price_usd,
                              "no_new_account": no_new_account},
             "summary": summary, "next_step": next_step, "counts": counts,
-            "evaluations": evaluations, "vendor_calls_made": 0}
+            "evaluations": evaluations, "complimentary_checks": complimentary_checks,
+            "vendor_calls_made": 0}
+
+
+def support():
+    """Optional gratuity information, returned only when explicitly requested."""
+    return {
+        "optional": True,
+        "message": "AgentDesk is free. A gratuity never changes results or access. Only a person authorized to spend should choose whether to send one.",
+        "asset": "Native USDC", "network": "Ethereum mainnet",
+        "recipient": "0x41c7E804D8Ed1448Ee7464DDFB80551705936550",
+        "reference_url": "https://www.circle.com/multi-chain-usdc/ethereum",
+        "payment_processed_by_agentdesk": False
+    }
 
 
 TOOL = {
@@ -114,13 +141,21 @@ ASSESS_TOOL = {
     "name": "assess_services",
     "description": "Best first call for choosing an API. State the capability and optional delivery, budget, or account constraints. Get candidates, exclusions, unknowns, source links, and a next step. No purchase or vendor call occurs.",
     "annotations": {"readOnlyHint": True, "destructiveHint": False, "openWorldHint": False},
-    "outputSchema": {"type": "object", "required": ["query", "requirements", "summary", "next_step", "counts", "evaluations", "vendor_calls_made"]},
+    "outputSchema": {"type": "object", "required": ["query", "requirements", "summary", "next_step", "counts", "evaluations", "complimentary_checks", "vendor_calls_made"]},
     "inputSchema": {"type": "object", "properties": {
         "capability": {"type": "string"},
         "delivery": {"type": "string", "enum": ["any", "prerecorded", "streaming"], "default": "any"},
         "max_price_usd": {"type": "number", "minimum": 0},
         "no_new_account": {"type": "boolean", "default": False}
     }, "required": ["capability"], "additionalProperties": False}
+}
+
+SUPPORT_TOOL = {
+    "name": "support_agentdesk",
+    "description": "Return optional gratuity details only if the guest explicitly asks. No payment is initiated or processed.",
+    "annotations": {"readOnlyHint": True, "destructiveHint": False, "openWorldHint": False},
+    "outputSchema": {"type": "object", "required": ["optional", "message", "asset", "network", "recipient", "reference_url", "payment_processed_by_agentdesk"]},
+    "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False}
 }
 
 
@@ -135,26 +170,30 @@ def rpc(request):
             supported = {"2025-03-26", "2025-06-18"}
             result = {"protocolVersion": requested if requested in supported else "2025-06-18",
                       "capabilities": {"tools": {}},
-                      "serverInfo": {"name": "agentdesk-proof", "version": "0.3.0"}}
+                      "serverInfo": {"name": "agentdesk-proof", "version": "0.4.0"}}
         elif method == "ping":
             result = {}
         elif method == "tools/list":
-            result = {"tools": [TOOL, ASSESS_TOOL]}
+            result = {"tools": [TOOL, ASSESS_TOOL, SUPPORT_TOOL]}
         elif method == "tools/call":
             params = request.get("params", {})
             name = params.get("name")
-            if name not in (TOOL["name"], ASSESS_TOOL["name"]):
+            if name not in (TOOL["name"], ASSESS_TOOL["name"], SUPPORT_TOOL["name"]):
                 raise ValueError("unknown tool")
             args = params.get("arguments", {})
             if name == TOOL["name"]:
                 if set(args) - {"capability", "max_price_usd", "limit"}:
                     raise ValueError("unknown argument")
                 data = search(args.get("capability"), args.get("max_price_usd"), args.get("limit", 10))
-            else:
+            elif name == ASSESS_TOOL["name"]:
                 if set(args) - {"capability", "delivery", "max_price_usd", "no_new_account"}:
                     raise ValueError("unknown argument")
                 data = assess(args.get("capability"), args.get("delivery", "any"),
                               args.get("max_price_usd"), args.get("no_new_account", False))
+            else:
+                if args:
+                    raise ValueError("unknown argument")
+                data = support()
             result = {"content": [{"type": "text", "text": json.dumps(data)}],
                       "structuredContent": data, "isError": False}
         else:
