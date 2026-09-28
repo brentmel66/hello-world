@@ -61,30 +61,46 @@ def assess(capability, delivery="any", max_price_usd=None, no_new_account=False)
     evaluations = []
     for item in candidates:
         blockers = []
+        unknowns = []
         if delivery != "any" and f"audio.transcribe.{delivery}" not in item["capabilities"]:
             blockers.append(f"{delivery} delivery is not documented in this catalog")
         if max_price_usd is not None:
             price = item["price_usd_per_job"]
             if price is None:
-                blockers.append("per-job price is unknown; budget cannot be verified")
+                unknowns.append("per-job price is unknown; budget cannot be verified")
             elif price > max_price_usd:
                 blockers.append("listed price exceeds budget")
         if no_new_account:
             blockers.append("provider account and API key are required")
+        decision = "excluded" if blockers else "needs_verification" if unknowns else "candidate"
         evaluations.append({"id": item["id"], "provider": item["provider"],
-                            "decision": "needs_verification" if blockers else "candidate",
-                            "blockers": blockers, "evidence_url": item["docs_url"],
+                            "decision": decision, "blockers": blockers,
+                            "unknowns": unknowns, "evidence_url": item["docs_url"],
                             "verified_on": item["verified_on"],
                             "warning": "Availability and live pricing are not checked."})
+    counts = {decision: sum(x["decision"] == decision for x in evaluations)
+              for decision in ("candidate", "needs_verification", "excluded")}
+    if not evaluations:
+        summary = "No catalog entry matches this capability. Try a narrower or related request; do not infer that no provider exists."
+        next_step = "Search original provider documentation or request catalog coverage."
+    elif counts["candidate"]:
+        summary = f"{counts['candidate']} catalog candidate(s); confirm current terms and availability before use."
+        next_step = "Review source documentation and test with your own authorized credentials."
+    else:
+        summary = "No provider is confirmed to meet every stated requirement."
+        next_step = "Review the blockers and unknowns before choosing or spending."
     return {"query": capability,
             "requirements": {"delivery": delivery, "max_price_usd": max_price_usd,
                              "no_new_account": no_new_account},
+            "summary": summary, "next_step": next_step, "counts": counts,
             "evaluations": evaluations, "vendor_calls_made": 0}
 
 
 TOOL = {
     "name": "search_services",
-    "description": "Find documented third-party API capabilities. Results include source links and explicitly unknown pricing; no vendor call or purchase occurs.",
+    "description": "Browse the small documented API catalog by capability. For budget, delivery, or account constraints use assess_services instead. No purchase or vendor call occurs.",
+    "annotations": {"readOnlyHint": True, "destructiveHint": False, "openWorldHint": False},
+    "outputSchema": {"type": "object", "required": ["query", "matches", "total_matches", "note"]},
     "inputSchema": {
         "type": "object", "properties": {
             "capability": {"type": "string", "description": "Requested capability, e.g. transcribe recorded audio"},
@@ -96,7 +112,9 @@ TOOL = {
 
 ASSESS_TOOL = {
     "name": "assess_services",
-    "description": "Compare documented API capabilities against delivery, budget, and account requirements. Return source evidence and blockers, never a guessed price.",
+    "description": "Best first call for choosing an API. State the capability and optional delivery, budget, or account constraints. Get candidates, exclusions, unknowns, source links, and a next step. No purchase or vendor call occurs.",
+    "annotations": {"readOnlyHint": True, "destructiveHint": False, "openWorldHint": False},
+    "outputSchema": {"type": "object", "required": ["query", "requirements", "summary", "next_step", "counts", "evaluations", "vendor_calls_made"]},
     "inputSchema": {"type": "object", "properties": {
         "capability": {"type": "string"},
         "delivery": {"type": "string", "enum": ["any", "prerecorded", "streaming"], "default": "any"},
@@ -113,9 +131,11 @@ def rpc(request):
         return None
     try:
         if method == "initialize":
-            requested = request.get("params", {}).get("protocolVersion", "2025-03-26")
-            result = {"protocolVersion": requested, "capabilities": {"tools": {}},
-                      "serverInfo": {"name": "agentdesk-proof", "version": "0.2.0"}}
+            requested = request.get("params", {}).get("protocolVersion", "2025-06-18")
+            supported = {"2025-03-26", "2025-06-18"}
+            result = {"protocolVersion": requested if requested in supported else "2025-06-18",
+                      "capabilities": {"tools": {}},
+                      "serverInfo": {"name": "agentdesk-proof", "version": "0.3.0"}}
         elif method == "ping":
             result = {}
         elif method == "tools/list":
@@ -135,7 +155,8 @@ def rpc(request):
                     raise ValueError("unknown argument")
                 data = assess(args.get("capability"), args.get("delivery", "any"),
                               args.get("max_price_usd"), args.get("no_new_account", False))
-            result = {"content": [{"type": "text", "text": json.dumps(data)}], "isError": False}
+            result = {"content": [{"type": "text", "text": json.dumps(data)}],
+                      "structuredContent": data, "isError": False}
         else:
             return {"jsonrpc": "2.0", "id": ident, "error": {"code": -32601, "message": "Method not found"}}
         return {"jsonrpc": "2.0", "id": ident, "result": result}
