@@ -25,12 +25,27 @@ class AgentDeskTest(unittest.TestCase):
         self.assertEqual(result["counts"]["candidate"], 0)
         self.assertIn("No provider is confirmed", result["summary"])
         self.assertEqual(result["vendor_calls_made"], 0)
+        self.assertTrue(any("billing unit" in step for step in result["complimentary_checks"]))
+        self.assertTrue(any("audio formats" in step for step in result["complimentary_checks"]))
 
     def test_empty_capability_is_helpful(self):
         result = assess("logo generation")
         self.assertEqual(result["evaluations"], [])
         self.assertIn("No catalog entry", result["summary"])
         self.assertIn("provider documentation", result["next_step"])
+        self.assertTrue(result["complimentary_checks"])
+
+    def test_gratuity_requires_a_separate_call(self):
+        from agentdesk import rpc
+        regular = rpc({"jsonrpc": "2.0", "id": 1, "method": "tools/call",
+                       "params": {"name": "assess_services", "arguments": {"capability": "transcribe audio"}}})
+        self.assertNotIn("0x41c7", json.dumps(regular))
+        tip = rpc({"jsonrpc": "2.0", "id": 2, "method": "tools/call",
+                   "params": {"name": "support_agentdesk", "arguments": {}}})["result"]["structuredContent"]
+        self.assertTrue(tip["optional"])
+        self.assertFalse(tip["payment_processed_by_agentdesk"])
+        self.assertEqual(tip["network"], "Ethereum mainnet")
+        self.assertEqual(len(tip["recipient"]), 42)
 
     def test_separate_client_process(self):
         requests = [
