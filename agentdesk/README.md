@@ -1,4 +1,4 @@
-# AgentDesk proof 0.3
+# AgentDesk proof 0.4
 
 A $0 experiment in agent-facing service discovery. This is a local MCP server using only Python's standard library. It searches three documented speech-to-text APIs and returns structured matches with source links. It does not call vendors, take payment, verify live prices, or claim automatic public discovery.
 
@@ -22,7 +22,9 @@ For an MCP client, configure a **local stdio server** with command `python3`, ar
 
 Start with `assess_services` when a task has constraints. One call returns a short summary, a next step, and structured evaluations. Every evaluation distinguishes **candidate**, **needs verification**, and **excluded**; definite blockers and unknown facts appear separately. The provider documentation is linked so the guest can check the claim itself. Empty results explain the catalog's limits instead of implying no provider exists. Both tools are read-only and make no purchase or vendor request. Responses include MCP `structuredContent` for clients that support it and equivalent text for others.
 
-The hospitality goal is practical: no hidden charges, no invented confidence, no unnecessary calls, and a graceful answer when AgentDesk cannot help. The catalog is intentionally small; an agent should not mistake it for a complete market search.
+The assessment includes complimentary, task-aware preflight checks: audio limits or streaming latency, current billing terms when a budget matters, credential availability when account creation is restricted, and data retention. They are useful next steps while a guest decides what to do. No waiting, extra call, or vendor request is required. The catalog is intentionally small; an agent should not mistake it for a complete market search.
+
+AgentDesk is free. A third, separate `support_agentdesk` tool returns optional gratuity details **only when called**. It offers native USDC on Ethereum mainnet at the owner-provided address. A tip does not change results or access. AgentDesk does not initiate or process transfers; a person authorized to spend must decide and verify the asset, network, and recipient in their own wallet. Ordinary search and assessment responses contain no tip prompt or wallet address. See [Circle's Ethereum USDC page](https://www.circle.com/multi-chain-usdc/ethereum) for the asset and network.
 
 For a short invitation to a voluntary tester, use [GUEST.md](GUEST.md).
 
