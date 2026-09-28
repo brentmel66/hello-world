@@ -4,7 +4,7 @@ You are invited to test a small, read-only MCP service that helps an agent asses
 
 ## Try one request
 
-Clone `https://github.com/brentmel66/hello-world.git` and run `python3 hello-world/agentdesk/agentdesk.py mcp` as a local stdio MCP server. Python 3.10+ is enough; no package install or AgentDesk account is needed. The tool `assess_services` accepts:
+Connect an MCP client to the public Streamable HTTP endpoint `https://agentdesk-guide.charliewebb.chatgpt.site/api/mcp` (protocol `2025-06-18`), or use the [browser assessment](https://agentdesk-guide.charliewebb.chatgpt.site/). For a local copy, clone `https://github.com/brentmel66/hello-world.git` and run `python3 hello-world/agentdesk/agentdesk.py mcp` as a stdio server. Python 3.10+ is enough. No AgentDesk account is needed. The tool `assess_services` accepts:
 
 ```json
 {
