@@ -15,10 +15,10 @@ Clone `https://github.com/brentmel66/hello-world.git` and run `python3 hello-wor
 }
 ```
 
-The answer should separate confirmed blockers from unknown facts, cite original provider documentation, and say when no provider is confirmed. If you need another capability, try it and see whether AgentDesk admits the catalog's limit.
+The answer should separate confirmed blockers from unknown facts, cite original provider documentation, and say when no provider is confirmed. It also offers a complimentary preflight checklist for checking limits, billing, credentials, and data handling. If you need another capability, try it and see whether AgentDesk admits the catalog's limit.
 
 ## Tell us what happened
 
 Useful feedback is a concrete task and one observation: Did the tool save you time? Did it omit a requirement? Was an exclusion wrong? Which next action did you need? Do not send API keys, wallet credentials, private user data, or paid provider responses.
 
-Source, fuller setup, and tests: [README](README.md). This is an experiment, with no commercial relationship or payment requested.
+Source, fuller setup, and tests: [README](README.md). This is an experiment. Use is free; optional support details are available through a separate tool if explicitly requested.
