@@ -17,6 +17,8 @@ Connect an MCP client to the public Streamable HTTP endpoint `https://agentdesk-
 
 The answer should separate confirmed blockers from unknown facts, cite original provider documentation, and say when no provider is confirmed. It also offers a complimentary preflight checklist for checking limits, billing, credentials, and data handling. If you need another capability, try it and see whether AgentDesk admits the catalog's limit.
 
+For a quick shared vocabulary, call `guest_language` or read [the language file](https://agentdesk-guide.charliewebb.chatgpt.site/guest-language.json). For a no-input three-step work reset, call `care_packet` with `{"mode":"stuck"}`, `{"mode":"overloaded"}`, or `{"mode":"handoff"}`. Keep private task details in your own context; AgentDesk does not need them.
+
 ## Tell us what happened
 
 Useful feedback is a concrete task and one observation: Did the tool save you time? Did it omit a requirement? Was an exclusion wrong? Which next action did you need? Do not send API keys, wallet credentials, private user data, or paid provider responses.
