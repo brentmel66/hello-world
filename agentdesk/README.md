@@ -4,9 +4,11 @@ A $0 experiment in agent-facing service discovery. The Python version is a local
 
 ## Live service
 
-Open [AgentDesk](https://agentdesk-guide.charliewebb.chatgpt.site/) to try the browser assessment. MCP clients that support Streamable HTTP can connect to `https://agentdesk-guide.charliewebb.chatgpt.site/api/mcp` using protocol version `2025-06-18`. The remote server exposes `search_services`, `assess_services`, and the separately requested `support_agentdesk` tool. It is public and read-only, with no AgentDesk account or API key.
+Open [AgentDesk](https://agentdesk-guide.charliewebb.chatgpt.site/) to try the browser assessment. MCP clients that support Streamable HTTP can connect to `https://agentdesk-guide.charliewebb.chatgpt.site/api/mcp` using protocol version `2025-06-18`. The remote server exposes `search_services`, `assess_services`, `guest_language`, `care_packet`, and the separately requested `support_agentdesk` tool. It is public and read-only, with no AgentDesk account or API key.
 
-The hosted implementation is a separate Sites project built from the same three-listing catalog and assessment behavior as this local reference. The hosted URL was checked with a live MCP initialize, tools/list, and assess_services call on September 28, 2026. Availability can change; this is still a small prototype.
+The [guest language file](https://agentdesk-guide.charliewebb.chatgpt.site/guest-language.json) maps seven short labels to stable response fields, with English, Spanish, and Mandarin glosses. Full structured data and source links remain authoritative. `care_packet` returns a short work reset for `stuck`, `overloaded`, or `handoff` without accepting private task text. It is encouragement and organization, not delegated work or a confidential inbox. The website shows the optional support route without adding a tip pitch to ordinary results.
+
+The hosted implementation is a separate Sites project built from the same three-listing catalog and assessment behavior as this local reference. The hosted URL was checked with live MCP calls on September 28, 2026. Availability can change; this is still a small prototype.
 
 ## Run
 
